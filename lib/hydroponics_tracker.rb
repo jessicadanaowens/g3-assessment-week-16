@@ -52,40 +52,40 @@ class HydroponicsTracker
   end
 
   def average_ph(container_array)
-    sum = 0.00
+    sum = 0
     length = container_array.length
     container_array.each do |array|
-      sum += array[4].to_i
+      sum += array[4].to_f
     end
 
-    sum / length
+    (sum / length).round(2)
   end
 
   def average_nutrient(container_array)
-    sum = 0.00
+    sum = 0
     length = container_array.length
     container_array.each do |array|
-      sum += array[5].to_i
+      sum += array[5].to_f
     end
-    sum / length
+    (sum / length).round(2)
   end
 
   def average_temperature(container_array)
-    sum = 0.00
+    sum = 0
     length = container_array.length
     container_array.each do |array|
-      sum += array[6].to_i
+      sum += array[6].to_f
     end
-    sum / length
+    (sum / length).round(2)
   end
 
   def average_water_level(container_array)
-    sum = 0.00
+    sum = 0
     length = container_array.length
     container_array.each do |array|
-      sum += array[7].to_i
+      sum += array[7].to_f
     end
-    sum / length
+    (sum / length).round(2)
   end
 
   def average
@@ -104,6 +104,18 @@ class HydroponicsTracker
       return @container2_name
     end
     if average_temperature(container3_array) > average_temperature(container1_array) && average_temperature(container3_array) > average_temperature(container2_array)
+      return @container3_name
+    end
+  end
+
+  def highest_absolute_water
+    if average_water_level(container1_array) > average_water_level(container2_array) && average_water_level(container1_array) > average_water_level(container3_array)
+      return @container1_name
+    end
+    if average_water_level(container2_array) > average_water_level(container1_array) && average_water_level(container2_array) > average_water_level(container3_array)
+      return @container2_name
+    end
+    if average_water_level(container3_array) > average_water_level(container1_array) && average_water_level(container3_array) > average_water_level(container2_array)
       return @container3_name
     end
   end
