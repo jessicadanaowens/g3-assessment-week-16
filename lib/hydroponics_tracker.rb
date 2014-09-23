@@ -1,4 +1,6 @@
 require "csv"
+require "time"
+require "byebug"
 class HydroponicsTracker
 
   def initialize(file, name1, name2, name3)
@@ -12,9 +14,18 @@ class HydroponicsTracker
     @file.split("\n")
   end
 
+  def everything_array
+    container_array = []
+
+    array_of_data.each do |string|
+      array = string.split(" ")
+        container_array.push(array)
+    end
+    container_array
+  end
+
   def container1_array
     container_array = []
-    hash = {}
 
     array_of_data.each do |string|
       array = string.split(" ")
@@ -27,7 +38,6 @@ class HydroponicsTracker
 
   def container2_array
     container_array = []
-    hash = {}
 
     array_of_data.each do |string|
       array = string.split(" ")
@@ -40,7 +50,6 @@ class HydroponicsTracker
 
   def container3_array
     container_array = []
-    hash = {}
 
     array_of_data.each do |string|
       array = string.split(" ")
@@ -57,8 +66,40 @@ class HydroponicsTracker
     container_array.each do |array|
       sum += array[4].to_f
     end
-
     (sum / length).round(2)
+  end
+
+  def container1_highest_ph(start_date, end_date)
+    array_of_ph = []
+    range = Time.parse(start_date)..Time.parse(end_date)
+    container1_array.each do |array|
+      if range.cover?(Time.parse("#{array[0]}"))
+        array_of_ph.push(array[4].to_f)
+      end
+    end
+    array_of_ph.max
+  end
+
+  def container2_highest_ph(start_date, end_date)
+    array_of_ph = []
+    range = Time.parse(start_date)..Time.parse(end_date)
+    container2_array.each do |array|
+      if range.cover?(Time.parse("#{array[0]}"))
+        array_of_ph.push(array[4].to_f)
+      end
+    end
+    array_of_ph.max
+  end
+
+  def container3_highest_ph(start_date, end_date)
+    array_of_ph = []
+    range = Time.parse(start_date)..Time.parse(end_date)
+    container3_array.each do |array|
+      if range.cover?(Time.parse("#{array[0]}"))
+        array_of_ph.push(array[4].to_f)
+      end
+    end
+    array_of_ph.max
   end
 
   def average_nutrient(container_array)
@@ -120,4 +161,20 @@ class HydroponicsTracker
     end
   end
 
+  def average_all
+    {'pH' => average_ph(everything_array), 'nutrient solution level' => average_nutrient(everything_array), 'temperature' => average_temperature(everything_array), 'water level' => average_water_level(everything_array)}
+  end
+
+  def highest_ph_for_date(start_date, end_date)
+    byebug
+    if container1_highest_ph(start_date, end_date) > container2_highest_ph(start_date, end_date)  && container1_highest_ph(start_date, end_date)  > container3_highest_ph(start_date, end_date)
+      return @container1_name
+    end
+    if container2_highest_ph(start_date, end_date)  > container1_highest_ph(start_date, end_date)  && container2_highest_ph(start_date, end_date) > container3_highest_ph(start_date, end_date)
+      return @container2_name
+    end
+    if container3_highest_ph(start_date, end_date)  > container1_highest_ph(start_date, end_date)  && container3_highest_ph(start_date, end_date)  > container2_highest_ph(start_date, end_date)
+      return @container3_name
+    end
+  end
 end
